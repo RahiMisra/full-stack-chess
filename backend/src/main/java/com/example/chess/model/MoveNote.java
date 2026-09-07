@@ -19,27 +19,27 @@ public class MoveNote {
 	@Column(columnDefinition = "TEXT")
 	private String note;
 	
-	private Long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	private void setId(Long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	private String getMove() {
+	public String getMove() {
 		return move;
 	}
 
-	private void setMove(String move) {
+	public void setMove(String move) {
 		this.move = move;
 	}
 
-	private String getNote() {
+	public String getNote() {
 		return note;
 	}
 
-	private void setNote(String note) {
+	public void setNote(String note) {
 		this.note = note;
 	}
 	
