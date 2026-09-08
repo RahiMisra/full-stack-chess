@@ -33,8 +33,13 @@ public class MoveNoteService {
 	    MoveNote existingNote = repository.findById(id)
 	            .orElseThrow();
 
-	    existingNote.setMove(updatedNote.getMove());
-	    existingNote.setNote(updatedNote.getNote());
+	    if (updatedNote.getMove() != null && !updatedNote.getMove().isEmpty()) {
+	        existingNote.setMove(updatedNote.getMove());
+	    }
+
+	    if (updatedNote.getNote() != null && !updatedNote.getNote().isEmpty()) {
+	        existingNote.setNote(updatedNote.getNote());
+	    }
 
 	    return repository.save(existingNote);
 	}

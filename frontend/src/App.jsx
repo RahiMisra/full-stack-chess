@@ -7,7 +7,7 @@ function App() {
   const [selectedNote, setSelectedNote] = useState(null);
   const [searchId, setSearchId] = useState('');
 
-  // GET all notes
+  // GET - all notes
   function getNotes() {
     if (notes.length > 0) {
         setNotes([]);
@@ -19,22 +19,25 @@ function App() {
         .then(data => setNotes(data));
 }
 
-  // GET note by id
+  // GET - note by id
   function getNote(id) {
-  fetch(`http://localhost:8080/api/notes/${id}`)
-    .then(response => {
-      if (!response.ok) {
+    if (id === '') {
         setSelectedNote(null);
-        return null;
-      }
-
-      return response.json();
-    })
-    .then(data => {
-      if (data) {
-        setSelectedNote(data);
-      }
-    });
+        return;
+    }
+    fetch(`http://localhost:8080/api/notes/${id}`)
+      .then(response => {
+        if (!response.ok) {
+          setSelectedNote(null);
+          return null;
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data) {
+          setSelectedNote(data);
+        }
+      });
 }
 
   // POST - create a note
@@ -65,13 +68,16 @@ function App() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        move: 'Nf3',
-        note: 'Updated note.'
+        move: move,
+        note: note
       })
     })
       .then(response => response.json())
       .then(data => {
         console.log('Updated:', data);
+        setMove('');
+        setNote('');
+        getNote(id)
       });
   }
 
@@ -127,6 +133,13 @@ function App() {
           <h2>{selectedNote.move}</h2>
           <p>{selectedNote.note}</p>
           <p>{selectedNote.id}</p>
+          <button onClick={() => updateNote(selectedNote.id)}>
+            Update
+          </button>
+
+          <button onClick={() => deleteNote(selectedNote.id)}>
+            Delete
+          </button>
         </div>
       )}
 
