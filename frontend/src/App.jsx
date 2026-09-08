@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 
 function App() {
   const [notes, setNotes] = useState([]);
+  const [move, setMove] = useState('');
+  const [note, setNote] = useState('');
 
   // GET all notes
   function getNotes() {
@@ -25,13 +27,15 @@ function App() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        move: 'Nf3',
-        note: 'Develops the knight.'
+        move: move,
+        note: note
       })
     })
       .then(response => response.json())
       .then(data => {
         console.log('Created:', data);
+        setMove('');
+        setNote('');
         getNotes();
       });
   }
@@ -74,8 +78,22 @@ function App() {
     <div>
       <h1>Chess Notes</h1>
 
+      <input
+        type="text"
+        placeholder="Move"
+        value={move}
+        onChange={event => setMove(event.target.value)}
+      />
+
+      <input
+        type="text"
+        placeholder="Note"
+        value={note}
+        onChange={event => setNote(event.target.value)}
+      />
+
       <button onClick={createNote}>
-        Create Test Note
+        Add Note
       </button>
 
       {notes.map(note => (
