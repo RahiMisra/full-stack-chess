@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import './App.css';
+
+import { useState } from 'react';
 
 function App() {
   const [notes, setNotes] = useState([]);
@@ -91,81 +93,84 @@ function App() {
       });
   }
 
-  useEffect(() => {
-    getNotes();
-  }, []);
-
   return (
     <div>
       <h1>Chess Notes</h1>
 
-      <input
-        type="text"
-        placeholder="Move"
-        value={move}
-        onChange={event => setMove(event.target.value)}
-      />
+      <div className="main-layout">
+        <div className="main-controls">
+          <input
+            type="text"
+            placeholder="Move"
+            value={move}
+            onChange={event => setMove(event.target.value)}
+          />
 
-      <input
-        type="text"
-        placeholder="Note"
-        value={note}
-        onChange={event => setNote(event.target.value)}
-      />
+          <input
+            type="text"
+            placeholder="Note"
+            value={note}
+            onChange={event => setNote(event.target.value)}
+          />
 
-      <button onClick={createNote}>
-        Add Note
-      </button>
-
-      <input
-        type="text"
-        placeholder="Note ID"
-        value={searchId}
-        onChange={event => setSearchId(event.target.value)}
-      />
-
-      <button onClick={() => getNote(searchId)}>
-        Get Note
-      </button>
-
-      {selectedNote && (
-        <div>
-          <h2>{selectedNote.move}</h2>
-          <p>{selectedNote.note}</p>
-          <p>{selectedNote.id}</p>
-          <button onClick={() => updateNote(selectedNote.id)}>
-            Update
+          <button onClick={createNote}>
+            Add Note
           </button>
 
-          <button onClick={() => deleteNote(selectedNote.id)}>
-            Delete
+          <input
+            type="text"
+            placeholder="Note ID"
+            value={searchId}
+            onChange={event => setSearchId(event.target.value)}
+          />
+
+          <button onClick={() => getNote(searchId)}>
+            Get Note
           </button>
+
+          {selectedNote && (
+            <div>
+              <h2>{selectedNote.move}</h2>
+              <p>{selectedNote.note}</p>
+              <p>{selectedNote.id}</p>
+              <button onClick={() => updateNote(selectedNote.id)}>
+                Update
+              </button>
+
+              <button onClick={() => deleteNote(selectedNote.id)}>
+                Delete
+              </button>
+            </div>
+          )}
         </div>
-      )}
-
-      <button onClick={getNotes}>
-        {notes.length > 0 ? 'Hide All Notes' : 'Get All Notes'}
-      </button>
-
-      {notes.map(note => (
-        <div key={note.id}>
-          <h2>{note.move}</h2>
-          <p>{note.note}</p>
-          <p>{note.id}</p>
-
-          <button onClick={() => getNote(note.id)}>
-            Get
+        <div className="all-notes">
+          <button onClick={getNotes}>
+            {notes.length > 0 ? 'Hide All Notes' : 'Get All Notes'}
           </button>
 
-          <button onClick={() => updateNote(note.id)}>
-            Update
-          </button>
+          {notes.map(note => (
+            <div key={note.id}>
+              <h2>{note.move}</h2>
+              <p>{note.note}</p>
+              <p>{note.id}</p>
 
-          <button onClick={() => deleteNote(note.id)}>
-            Delete
-          </button>
+              <button onClick={() => getNote(note.id)}>
+                Get
+              </button>
+
+              <button onClick={() => updateNote(note.id)}>
+                Update
+              </button>
+
+              <button onClick={() => deleteNote(note.id)}>
+                Delete
+              </button>
+            </div>
+          ))}
         </div>
-      ))}
+
+      </div>
+
     </div>
   );
 }

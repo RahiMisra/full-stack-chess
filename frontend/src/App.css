@@ -182,3 +182,35 @@
     border-right-color: var(--border);
   }
 }
+
+/* ---------------------------- MY ADDITIONS ------------------------------- */
+
+.main-layout {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+.main-controls {
+    flex: 1;
+}
+
+.all-notes {
+    flex: 1;
+}
+
+.main-controls input {
+    margin: 0 auto 10px auto;
+    display: block;
+}
+
+.main-controls button {
+    margin: 0 auto 10px auto;
+    margin-bottom: 20px;
+}
+
+.all-notes > div {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ccc;
+}
