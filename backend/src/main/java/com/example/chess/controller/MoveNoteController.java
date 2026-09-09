@@ -18,7 +18,6 @@ import com.example.chess.service.MoveNoteService;
 
 @RestController
 @RequestMapping("/api/notes")
-@CrossOrigin(origins = "http://localhost:5173")
 public class MoveNoteController {
 	
 	private final MoveNoteService service;

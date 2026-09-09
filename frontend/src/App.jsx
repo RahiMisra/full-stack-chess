@@ -2,6 +2,8 @@ import './App.css';
 
 import { useState } from 'react';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function App() {
   const [notes, setNotes] = useState([]);
   const [move, setMove] = useState('');
@@ -16,7 +18,7 @@ function App() {
         return;
     }
 
-    fetch('http://localhost:8080/api/notes')
+    fetch(`${API_URL}/api/notes`)
         .then(response => response.json())
         .then(data => setNotes(data));
 }
@@ -27,7 +29,7 @@ function App() {
         setSelectedNote(null);
         return;
     }
-    fetch(`http://localhost:8080/api/notes/${id}`)
+    fetch(`${API_URL}/${id}`)
       .then(response => {
         if (!response.ok) {
           setSelectedNote(null);
@@ -44,7 +46,7 @@ function App() {
 
   // POST - create a note
   function createNote() {
-    fetch('http://localhost:8080/api/notes', {
+    fetch(`${API_URL}/api/notes`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -64,7 +66,7 @@ function App() {
 
   // PUT - update a note
   function updateNote(id) {
-    fetch(`http://localhost:8080/api/notes/${id}`, {
+    fetch(`${API_URL}/api/notes/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
