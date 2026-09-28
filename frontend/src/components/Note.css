@@ -1,0 +1,59 @@
+.note {
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+}
+
+.note h2 {
+  margin: 0 0 16px;
+  text-align: center;
+  color: var(--accent);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.note textarea {
+  width: 100%;
+  flex: 1;
+  min-height: 150px;
+  padding: 15px;
+  resize: none;
+  background-color: var(--input-background);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1.6;
+  outline: none;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.note textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.note textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(240, 201, 75, 0.15);
+}
+
+.note button {
+  align-self: flex-end;
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: var(--accent);
+  color: #252525;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.note button:hover {
+  background-color: var(--accent-hover);
+}
