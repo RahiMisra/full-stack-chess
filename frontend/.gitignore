@@ -23,6 +23,3 @@ dist-ssr
 *.sln
 *.sw?
 *.env
-
-# Test Suite
-test_chess_movement.pl
