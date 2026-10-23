@@ -1,6 +1,4 @@
-% chess_state.pl
 % state(Board, SideToMove, CastlingRights, EnPassant, HalfmoveClock, FullmoveNumber)
-% Represents the current state of a chess game.
 
 % INITIAL STATE
 initial_state(X) :-

@@ -1,14 +1,3 @@
-play_san_fen(FEN, SAN, NewFEN) :-
-    fen_to_state(FEN, State),
-    State = state(_, Side, _, _, _, _),
-    san_to_move(SAN, Side, Move),
-    play_move(State, Move, NewState, _Status, _Advantage),
-    state_to_fen(NewState, NewFEN).
-
-initial_fen(FEN) :-
-    initial_state(State),
-    state_to_fen(State, FEN).
-
 % FEN TO STATE
 fen_to_state(FEN, State) :-
     split_string(FEN, " ", " \t\n", Fields),
