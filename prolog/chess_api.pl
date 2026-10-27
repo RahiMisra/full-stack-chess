@@ -1,5 +1,4 @@
 :- module(chess_api, [
-    initial_fen/1,
     play_san_fen/6,
     get_position_info/4
 ]).
