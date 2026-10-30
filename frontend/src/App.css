@@ -1,74 +1,14 @@
-h1 {
-  height: 70px;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--surface);
-  border-bottom: 1px solid var(--border);
-  color: var(--accent);
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: 3px;
-}
-
 .main-layout {
   display: grid;
-  grid-template-columns: 35% 65%;
-  grid-template-rows: 40% 10% 50%;
+  grid-template-columns: 1fr 2fr;
   height: calc(100vh - 70px);
 }
 
-.search-area,
-.browse-area,
 .note-area,
-.line-area,
-.board-area {
+.chess-area {
   min-width: 0;
   min-height: 0;
   padding: 20px;
   background-color: var(--surface);
   border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
 }
-
-.search-area {
-  grid-column: 1;
-  grid-row: 1;
-}
-
-.browse-area {
-  grid-column: 1;
-  grid-row: 2 / 4;
-}
-
-.note-area {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-.line-area {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-.board-area {
-  grid-column: 2;
-  grid-row: 3;
-  overflow: hidden;
-}
-
-.search-area,
-.browse-area,
-.note-area {
-  display: flex;
-  justify-content: center;
-}
-
-.line-area,
-.board-area {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-

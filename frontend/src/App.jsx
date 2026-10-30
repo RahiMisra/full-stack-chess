@@ -1,39 +1,36 @@
 import './App.css';
-import Search from "./components/Search.jsx";
-import Browse from "./components/Browse.jsx";
-import Note from "./components/Note.jsx"
-import Line from "./components/Line.jsx"
-import Chessboard from "./components/Chessboard.jsx";
+
+import NotePanel from "./components/NotePanel";
+import ChessPanel from "./components/ChessPanel";
 
 import { useState } from 'react';
+import { playMove } from "./api/chessApi";
 
 const API_URL = import.meta.env.VITE_API_URL;
+const INITIAL_POSITION = {
+  fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+  positionKey: "",
+  status: "Active",
+  advantage: "Equal",
+};
 
 function App() {
+  const [position, setPosition] = useState(INITIAL_POSITION);
 
   return (
     <div>
       <h1>Chess Notes</h1>
       <div className="main-layout">
 
-        <div className="search-area">
-          <Search />
-        </div>
-
-        <div className="browse-area">
-          <Browse />
-        </div>
-
         <div className="note-area">
-          <Note />
+          <NotePanel />
         </div>
 
-        <div className="line-area">
-          <Line />
-        </div>
-
-        <div className="board-area">
-          <Chessboard />
+        <div className="chess-area">
+          <ChessPanel
+            position={position}
+            setPosition={setPosition}
+          />
         </div>
 
       </div>
