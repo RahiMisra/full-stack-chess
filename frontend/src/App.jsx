@@ -1,17 +1,16 @@
 import './App.css';
 
+import { useState } from "react";
+
 import NotePanel from "./components/NotePanel";
 import ChessPanel from "./components/ChessPanel";
 
-import { useState } from 'react';
-import { playMove } from "./api/chessApi";
-
-const API_URL = import.meta.env.VITE_API_URL;
 const INITIAL_POSITION = {
   fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
   positionKey: "",
-  status: "Active",
-  advantage: "Equal",
+  status: "Not evaluated",
+  advantage: "Not evaluated",
+  move: "Starting Position",
 };
 
 function App() {
@@ -23,13 +22,13 @@ function App() {
       <div className="main-layout">
 
         <div className="note-area">
-          <NotePanel />
+          <NotePanel position = {position}/>
         </div>
 
         <div className="chess-area">
           <ChessPanel
-            position={position}
-            setPosition={setPosition}
+            position = {position}
+            onSelectPosition = {setPosition}
           />
         </div>
 

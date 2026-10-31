@@ -1,4 +1,77 @@
 .note-panel {
-  width: 100%;
+  display: flex;
+  flex-direction: column;
   height: 100%;
+  min-height: 0;
+  gap: 16px;
+}
+
+.notes-list-section,
+.selected-note-section {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.notes-list-section {
+  flex: 0 1 40%;
+}
+
+.selected-note-section {
+  flex: 1;
+}
+
+.notes-list-section h2,
+.selected-note-section h2 {
+  margin: 0 0 12px;
+}
+
+.notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.note-list-item {
+  padding: 12px;
+  text-align: left;
+  font: inherit;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.note-list-item:hover {
+  background: #f0f0f0;
+}
+
+.note-list-item.selected {
+  border-color: #555;
+  background: #e8e8e8;
+  font-weight: bold;
+}
+
+.selected-note {
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.selected-note h3 {
+  margin-top: 0;
+}
+
+.selected-note p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+
+.empty-note-message {
+  color: #777;
 }

@@ -1,0 +1,33 @@
+.move-history {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid var(--border);
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.move-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.history-start,
+.history-move {
+  flex-shrink: 0;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  color: inherit;
+  cursor: pointer;
+}
+
+.history-start.selected,
+.history-move.selected {
+  background: var(--border);
+  font-weight: bold;
+}
