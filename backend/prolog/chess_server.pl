@@ -31,7 +31,7 @@ process_line(Line) :-
     nl,
     flush_output(user_output).
 
-% Handle a request to apply a SAN move.
+% Handle incoming requests.
 handle_request(Request, Response) :-
     get_dict(action, Request, Action),
     (   Action == "play_move"
@@ -52,12 +52,30 @@ handle_request(Request, Response) :-
                 error: "Invalid position or move"
             }
         )
+
+    ;   Action == "get_position_info"
+    ->  get_dict(fen, Request, Fen),
+        (   chess_api:get_position_info(
+                Fen, PositionKey, Status, Advantage
+            )
+        ->  Response = _{
+                success: true,
+                positionKey: PositionKey,
+                status: Status,
+                advantage: Advantage
+            }
+        ;   Response = _{
+                success: false,
+                error: "Invalid FEN or position"
+            }
+        )
+
     ;   Response = _{
             success: false,
             error: "Unknown action"
         }
     ).
-
+	
 % Convert exceptions into JSON instead of terminating the process.
 error_response(Error, Response) :-
     message_to_string(Error, Message),

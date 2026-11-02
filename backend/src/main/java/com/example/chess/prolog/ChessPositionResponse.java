@@ -1,6 +1,6 @@
 package com.example.chess.prolog;
 
-public record PrologResponse(
+public record ChessPositionResponse(
         boolean success,
         String newFen,
         String positionKey,

@@ -21,7 +21,7 @@ public class PrologChessService {
         this.jsonMapper = jsonMapper;
     }
 
-    public PrologResponse playMove(String fen, String san) {
+    public ChessPositionResponse playMove(String fen, String san) {
         Objects.requireNonNull(fen, "FEN cannot be null");
         Objects.requireNonNull(san, "SAN move cannot be null");
 
@@ -41,7 +41,29 @@ public class PrologChessService {
         // Convert Prolog's JSON response into a Java object.
         return jsonMapper.readValue(
                 responseJson,
-                PrologResponse.class
+                ChessPositionResponse.class
+        );
+    }
+    
+    public PositionInfoResponse getPositionInfo(String fen) {
+        Objects.requireNonNull(fen, "FEN cannot be null");
+
+        Map<String, String> request = Map.of(
+                "action", "get_position_info",
+                "fen", fen
+        );
+
+        // Convert the Java request into JSON.
+        String requestJson = jsonMapper.writeValueAsString(request);
+
+        // Send it to the running Prolog process.
+        String responseJson =
+                processManager.sendRequest(requestJson);
+
+        // Convert Prolog's JSON response into a Java object.
+        return jsonMapper.readValue(
+                responseJson,
+                PositionInfoResponse.class
         );
     }
 }
