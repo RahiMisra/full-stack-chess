@@ -2,11 +2,15 @@ package com.example.chess.controller;
 
 import com.example.chess.dto.CreateNoteRequest;
 import com.example.chess.dto.PositionNoteResponse;
+import com.example.chess.dto.UpdateNoteRequest;
 import com.example.chess.service.PositionNoteService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.NoSuchElementException;
 import java.util.List;
 
 @RestController
@@ -56,4 +60,40 @@ public class PositionNoteController {
             return ResponseEntity.badRequest().build();
         }
     }
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateNote(
+            @PathVariable Long id,
+            @RequestBody UpdateNoteRequest request
+    ) {
+        if (request.note() == null || request.note().isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            PositionNoteResponse updatedNote =
+                    positionNoteService.updateNote(id, request.note());
+
+            return ResponseEntity.ok(updatedNote);
+
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteNote(@PathVariable Long id) {
+        try {
+            positionNoteService.deleteNote(id);
+
+            return ResponseEntity.noContent().build();
+
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
 }

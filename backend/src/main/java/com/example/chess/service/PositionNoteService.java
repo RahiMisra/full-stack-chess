@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class PositionNoteService {
@@ -72,10 +73,46 @@ public class PositionNoteService {
                 ));
 
         PositionNote newNote = new PositionNote(position, note);
-
         PositionNote savedNote = positionNoteRepository.save(newNote);
 
         return toResponse(savedNote);
+    }
+
+    // Update the content of an existing note.
+    @Transactional
+    public PositionNoteResponse updateNote(Long id, String note) {
+
+        if (note == null || note.isBlank()) {
+            throw new IllegalArgumentException("Note cannot be empty.");
+        }
+
+        PositionNote existingNote = positionNoteRepository
+                .findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Note not found."));
+
+        existingNote.setNote(note);
+
+        PositionNote updatedNote = positionNoteRepository.save(existingNote);
+
+        return toResponse(updatedNote);
+    }
+
+    // Delete a note and remove its position if it has no remaining notes.
+    @Transactional
+    public void deleteNote(Long id) {
+
+        PositionNote existingNote = positionNoteRepository
+                .findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Note not found."));
+
+        ChessPosition position = existingNote.getPosition();
+
+        positionNoteRepository.delete(existingNote);
+
+        // Delete the position only if this was its last note.
+        if (positionNoteRepository.findByPosition(position).isEmpty()) {
+            chessPositionRepository.delete(position);
+        }
     }
 
     // Convert a database entity into a response DTO.
