@@ -2,4 +2,63 @@
   max-width: 100%;
   max-height: 100%;
   aspect-ratio: 1 / 1;
+  position: relative;
+}
+
+
+/* Slightly dim the board while choosing a promotion piece. */
+.promotion-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+/* Position the menu over the destination file. */
+.promotion-menu {
+  position: absolute;
+  left: calc(var(--promotion-file) * 12.5%);
+  width: 12.5%;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  z-index: 1001;
+}
+
+/* White pawn promotion: menu starts at rank 8. */
+.promotion-menu-top {
+  top: 0;
+}
+
+/* Black pawn promotion: menu starts at rank 1. */
+.promotion-menu-bottom {
+  bottom: 0;
+}
+
+/* Individual chess piece selection squares. */
+.promotion-piece {
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: white;
+  cursor: pointer;
+}
+
+.promotion-piece svg {
+  width: 100%;
+  height: 100%;
+}
+
+.promotion-piece:hover {
+  background: #e6e6e6;
+}
+
+.promotion-piece:disabled {
+  cursor: not-allowed;
 }

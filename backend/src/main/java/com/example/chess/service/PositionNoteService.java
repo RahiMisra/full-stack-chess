@@ -3,7 +3,8 @@ package com.example.chess.service;
 import com.example.chess.dto.PositionNoteResponse;
 import com.example.chess.model.ChessPosition;
 import com.example.chess.model.PositionNote;
-import com.example.chess.prolog.PositionInfoResponse;
+import com.example.chess.dto.PositionInfoRequest;
+import com.example.chess.dto.PositionInfoResponse;
 import com.example.chess.repository.ChessPositionRepository;
 import com.example.chess.repository.PositionNoteRepository;
 
@@ -35,7 +36,7 @@ public class PositionNoteService {
     public List<PositionNoteResponse> getNotes(String fen) {
 
         PositionInfoResponse positionInfo =
-                chessStateService.getPositionInfo(fen);
+                chessStateService.getPositionInfo(new PositionInfoRequest(fen));
 
         if (!positionInfo.success()) {
             throw new IllegalArgumentException(positionInfo.error());
@@ -60,7 +61,7 @@ public class PositionNoteService {
         }
 
         PositionInfoResponse positionInfo =
-                chessStateService.getPositionInfo(fen);
+                chessStateService.getPositionInfo(new PositionInfoRequest(fen));
 
         if (!positionInfo.success()) {
             throw new IllegalArgumentException(positionInfo.error());

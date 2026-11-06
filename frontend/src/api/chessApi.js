@@ -1,12 +1,12 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
-export async function playMove(fen, san) {
-    const response = await fetch(`${API_URL}/api/chess/moves`, {
+async function sendChessRequest(endpoint, body) {
+    const response = await fetch(`${API_URL}${endpoint}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ fen, san }),
+        body: JSON.stringify(body),
     });
 
     const result = await response.json();
@@ -16,8 +16,37 @@ export async function playMove(fen, san) {
     }
 
     if (!result.success) {
-        throw new Error(result.error || "The move was rejected.");
+        throw new Error(result.error || "The request was rejected.");
     }
 
     return result;
+}
+
+export async function playSan(fen, san) {
+    return sendChessRequest("/api/chess/moves/san", {
+        fen,
+        san,
+    });
+}
+
+export async function playCoordinates(fen, from, to, promotion = null) {
+    return sendChessRequest("/api/chess/moves/coordinates", {
+        fen,
+        from,
+        to,
+        promotion,
+    });
+}
+
+export async function getPositionInfo(fen) {
+    return sendChessRequest("/api/chess/position-info", {
+        fen,
+    });
+}
+
+export async function getLegalMoves(fen, square) {
+    return sendChessRequest("/api/chess/moves/legal", {
+        fen,
+        square,
+    });
 }

@@ -1,3 +1,4 @@
+
 :- use_module(library(http/json)).
 
 % Load chess_api.pl from the same directory as this script.
@@ -27,25 +28,60 @@ process_line(Line) :-
         Error,
         error_response(Error, Response)
     ),
-    json_write_dict(user_output, Response, [width(0)]),
+    json_write_dict(user_output, Response, [width(0), null(null)]),
     nl,
     flush_output(user_output).
 
 % Handle incoming requests.
 handle_request(Request, Response) :-
     get_dict(action, Request, Action),
-    (   Action == "play_move"
+
+    (   Action == "play_san"
     ->  get_dict(fen, Request, Fen),
         get_dict(san, Request, San),
         (   chess_api:play_san_fen(
-                Fen, San, NewFen, PositionKey, Status, Advantage
+                Fen, San,
+                NewFen, PositionKey, Status, Advantage,
+                MoveType, SideToMove, CastlingRights, EnPassant
             )
         ->  Response = _{
                 success: true,
                 newFen: NewFen,
                 positionKey: PositionKey,
                 status: Status,
-                advantage: Advantage
+                advantage: Advantage,
+                moveType: MoveType,
+                sideToMove: SideToMove,
+                castlingRights: CastlingRights,
+                enPassantTarget: EnPassant
+            }
+        ;   Response = _{
+                success: false,
+                error: "Invalid position or move"
+            }
+        )
+
+    ;   Action == "play_coordinates"
+    ->  get_dict(fen, Request, Fen),
+        get_dict(from, Request, From),
+        get_dict(to, Request, To),
+        get_dict(promotion, Request, Promotion),
+        (   chess_api:play_coordinates_fen(
+                Fen, From, To, Promotion,
+                NewFen, PositionKey, Status, Advantage,
+                SAN, MoveType, SideToMove, CastlingRights, EnPassant
+            )
+        ->  Response = _{
+                success: true,
+                newFen: NewFen,
+                positionKey: PositionKey,
+                status: Status,
+                advantage: Advantage,
+                san: SAN,
+                moveType: MoveType,
+                sideToMove: SideToMove,
+                castlingRights: CastlingRights,
+                enPassantTarget: EnPassant
             }
         ;   Response = _{
                 success: false,
@@ -56,17 +92,37 @@ handle_request(Request, Response) :-
     ;   Action == "get_position_info"
     ->  get_dict(fen, Request, Fen),
         (   chess_api:get_position_info(
-                Fen, PositionKey, Status, Advantage
+                Fen, PositionKey, Status, Advantage,
+                SideToMove, CastlingRights, EnPassant
             )
         ->  Response = _{
                 success: true,
                 positionKey: PositionKey,
                 status: Status,
-                advantage: Advantage
+                advantage: Advantage,
+                sideToMove: SideToMove,
+                castlingRights: CastlingRights,
+                enPassantTarget: EnPassant
             }
         ;   Response = _{
                 success: false,
                 error: "Invalid FEN or position"
+            }
+        )
+
+    ;   Action == "get_legal_moves"
+    ->  get_dict(fen, Request, Fen),
+        get_dict(square, Request, Square),
+        (   chess_api:get_piece_legal_moves(
+                Fen, Square, LegalMoves
+            )
+        ->  Response = _{
+                success: true,
+                moves: LegalMoves
+            }
+        ;   Response = _{
+                success: false,
+                error: "Invalid position or square"
             }
         )
 
@@ -75,7 +131,7 @@ handle_request(Request, Response) :-
             error: "Unknown action"
         }
     ).
-	
+
 % Convert exceptions into JSON instead of terminating the process.
 error_response(Error, Response) :-
     message_to_string(Error, Message),

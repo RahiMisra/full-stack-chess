@@ -11,11 +11,9 @@ import "./NotePanel.css";
 function NotePanel({ position }) {
     const [notes, setNotes] = useState([]);
     const [selectedNoteId, setSelectedNoteId] = useState(null);
-
     const [newNote, setNewNote] = useState("");
     const [editContent, setEditContent] = useState("");
     const [isEditing, setIsEditing] = useState(false);
-
     const [isLoading, setIsLoading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);

@@ -297,3 +297,205 @@ valid_file(e).
 valid_file(f).
 valid_file(g).
 valid_file(h).
+
+% COORDINATE PARSING
+coordinates_to_move(Board, Side, From, To, Promotion, Move) :-
+    coordinate_square(From, FromFile, FromRank),
+    coordinate_square(To, ToFile, ToRank),
+    coordinate_promotion(Promotion, PromotionPiece),
+    piece_at(Board, FromFile, FromRank, Piece),
+    Piece =.. [Side, PieceType],
+    Move = move(PieceType, FromFile, FromRank, ToFile, ToRank, PromotionPiece).
+
+% square parsing
+coordinate_square(Square, File, Rank) :-
+    string(Square),
+    string_chars(Square, [File, RankChar]),
+    valid_file(File),
+    atom_number(RankChar, Rank),
+    between(1, 8, Rank).
+
+% promotion parsing
+coordinate_promotion(null, none) :- !.
+coordinate_promotion(none, none) :- !.
+coordinate_promotion("queen", queen) :- !.
+coordinate_promotion("rook", rook) :- !.
+coordinate_promotion("bishop", bishop) :- !.
+coordinate_promotion("knight", knight) :- !.
+
+% SAN CREATION
+% Convert an internal move into SAN.
+move_to_san(State, Move, MoveType, Status, SAN) :-
+    Move = move(PieceType, _, _, ToFile, ToRank, Promotion),
+    (   MoveType = castle
+    ->  castle_san(ToFile, SANCore)
+    ;   find_piece(State, Move, FromFile, FromRank),
+        piece_san(PieceType, PieceChars),
+        san_disambiguation(
+            State, PieceType, ToFile, ToRank,
+            FromFile, FromRank, Disambiguation
+        ),
+        san_capture_marker(MoveType, CaptureMarker),
+        san_pawn_capture_prefix(
+            PieceType, MoveType, FromFile, PawnCapturePrefix
+        ),
+        san_destination(ToFile, ToRank, Destination),
+        san_promotion(Promotion, PromotionChars),
+        append([
+            PieceChars,
+            PawnCapturePrefix,
+            Disambiguation,
+            CaptureMarker,
+            Destination,
+            PromotionChars
+        ], SANCore)
+    ),
+    san_status(Status, StatusSuffix),
+    append(SANCore, StatusSuffix, SANChars),
+    atom_chars(SAN, SANChars).
+
+% Include the source file for pawn captures.
+san_pawn_capture_prefix(pawn, MoveType, FromFile, Prefix) :-
+    memberchk(MoveType, [capture, en_passant]),
+    !,
+    atom_chars(FromFile, Prefix).
+
+san_pawn_capture_prefix(_, _, _, []).
+
+% Piece notation.
+piece_san(king, ['K']).
+piece_san(queen, ['Q']).
+piece_san(rook, ['R']).
+piece_san(bishop, ['B']).
+piece_san(knight, ['N']).
+piece_san(pawn, []).
+
+
+% Castling notation.
+castle_san(g, ['O', '-', 'O']).
+castle_san(c, ['O', '-', 'O', '-', 'O']).
+
+
+% Capture notation.
+san_capture_marker(capture, ['x']).
+san_capture_marker(en_passant, ['x']).
+san_capture_marker(_, []).
+
+
+% Destination square.
+san_destination(File, Rank, Chars) :-
+    atom_chars(File, FileChars),
+    number_chars(Rank, RankChars),
+    append(FileChars, RankChars, Chars).
+
+
+% Promotion notation.
+san_promotion(none, []).
+san_promotion(queen, ['=', 'Q']).
+san_promotion(rook, ['=', 'R']).
+san_promotion(bishop, ['=', 'B']).
+san_promotion(knight, ['=', 'N']).
+
+
+% Check and checkmate suffixes.
+san_status(check, ['+']).
+san_status(checkmate, ['#']).
+san_status(_, []).
+
+
+% Determine whether source disambiguation is needed.
+san_disambiguation(
+    State, PieceType, ToFile, ToRank,
+    FromFile, FromRank, Disambiguation
+) :-
+    findall(
+        candidate(File, Rank),
+        legal_alternative(
+            State, PieceType, ToFile, ToRank,
+            FromFile, FromRank, File, Rank
+        ),
+        Alternatives
+    ),
+    (   Alternatives = []
+    ->  Disambiguation = []
+    ;   \+ member(candidate(FromFile, _), Alternatives)
+    ->  atom_chars(FromFile, Disambiguation)
+    ;   \+ member(candidate(_, FromRank), Alternatives)
+    ->  number_chars(FromRank, Disambiguation)
+    ;   atom_chars(FromFile, FileChars),
+        number_chars(FromRank, RankChars),
+        append(FileChars, RankChars, Disambiguation)
+    ).
+
+
+% Find another identical piece that can legally reach the destination.
+legal_alternative(
+    State, PieceType, ToFile, ToRank,
+    FromFile, FromRank, CandidateFile, CandidateRank
+) :-
+    State = state(Board, Side, _, _, _, _),
+    file_index(CandidateFile, _),
+    between(1, 8, CandidateRank),
+
+    \+ (CandidateFile = FromFile, CandidateRank = FromRank),
+
+    piece_at(Board, CandidateFile, CandidateRank, Piece),
+    Piece =.. [Side, PieceType],
+
+    CandidateMove = move(
+        PieceType,
+        CandidateFile,
+        CandidateRank,
+        ToFile,
+        ToRank,
+        none
+    ),
+
+    move_piece(
+        State, CandidateMove,
+        CandidateFile, CandidateRank, _, _
+    ).
+	
+% CONVERT ATOMS TO STRING
+convert_position_outputs(CastlingRights, EnPassant, ApiCastlingRights, ApiEnPassant) :-
+    castling_rights_to_api(CastlingRights, ApiCastlingRights),
+    en_passant_to_api(EnPassant, ApiEnPassant).
+	
+% Convert en passant target to a string.
+en_passant_to_api(none, null) :- !.
+
+en_passant_to_api(square(File, Rank), SquareString) :-
+    number_string(Rank, RankString),
+    atom_string(File, FileString),
+    string_concat(FileString, RankString, SquareString).
+
+% Convert castling rights to strings.
+castling_rights_to_api(Rights, StringRights) :-
+    maplist(atom_string, Rights, StringRights).
+	
+% CONVERT MOVES TO SQUARES
+convert_legal_moves(InternalMoves, ApiMoves) :-
+    maplist(convert_legal_move, InternalMoves, ApiMoves).
+
+convert_legal_move(
+    legal_move(FromFile, FromRank, ToFile, ToRank, MoveType, Promotion),
+    _{
+        from: From,
+        to: To,
+        moveType: MoveTypeString,
+        promotion: JsonPromotion
+    }
+):-
+    square_to_string(FromFile, FromRank, From),
+    square_to_string(ToFile, ToRank, To),
+    atom_string(MoveType, MoveTypeString),
+    promotion_to_json(Promotion, JsonPromotion).
+	
+promotion_to_json(none, null) :- !.
+promotion_to_json(Promotion, PromotionString) :-
+    atom_string(Promotion, PromotionString).
+
+square_to_string(File, Rank, Square) :-
+    atom_string(File, FileString),
+    number_string(Rank, RankString),
+    string_concat(FileString, RankString, Square).

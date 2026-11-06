@@ -6,11 +6,15 @@ import NotePanel from "./components/NotePanel";
 import ChessPanel from "./components/ChessPanel";
 
 const INITIAL_POSITION = {
-  fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-  positionKey: "",
-  status: "Not evaluated",
-  advantage: "Not evaluated",
-  move: "Starting Position",
+    fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    positionKey: "",
+    status: "Not evaluated",
+    advantage: "Not evaluated",
+    sideToMove: "white",
+    castlingRights: ["K", "Q", "k", "q"],
+    enPassantTarget: null,
+    move: "Starting Position",
+    moveType: null,
 };
 
 function App() {

@@ -1,6 +1,6 @@
 package com.example.chess.dto;
 
-public record PlayMoveRequest(
+public record PlaySanRequest(
         String fen,
         String san
 ) {}

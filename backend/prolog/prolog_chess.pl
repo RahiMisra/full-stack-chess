@@ -79,7 +79,7 @@ replace_at([Head|Tail], Index, NewValue, [Head|NewTail]) :-
     NextIndex is Index - 1,
     replace_at(Tail, NextIndex, NewValue, NewTail).
 
-play_move(State, Move, NewState, Status, Advantage) :-
+play_move(State, Move, NewState, Status, Advantage, MoveType) :-
 	find_piece(State, Move, FromFile, FromRank),
     move_piece(State, Move, FromFile, FromRank, MoveType, NewBoard),
     update_state(State, Move, FromFile, FromRank, MoveType, NewBoard, NewState),
@@ -573,3 +573,24 @@ piece_value(bishop, 3).
 piece_value(rook, 5).
 piece_value(queen, 9).
 piece_value(king, 0).
+
+% RETURN LEGAL MOVES
+% Get all legal moves for a piece at a specified square.
+get_legal_moves(State, FromFile, FromRank, LegalMoves) :-
+    State = state(Board, Side, _, _, _, _),
+    piece_at(Board, FromFile, FromRank, Piece),
+    Piece =.. [Side, PieceType],
+    findall(
+        legal_move(FromFile, FromRank, ToFile, ToRank, MoveType, Promotion),
+        legal_move_from_square(State, PieceType, FromFile, FromRank, ToFile, ToRank, MoveType, Promotion),
+        LegalMoves
+    ).
+
+% Find a legal destination for a specified piece.
+legal_move_from_square(State, PieceType, FromFile, FromRank, ToFile, ToRank, MoveType, Promotion) :-
+    State = state(_, Side, _, _, _, _),
+    file_index(ToFile, _),
+    between(1, 8, ToRank),
+    candidate_promotion(PieceType, Side, ToRank, Promotion),
+    Move = move(PieceType, none, none, ToFile, ToRank, Promotion),
+    move_piece(State, Move, FromFile, FromRank, MoveType, _).
